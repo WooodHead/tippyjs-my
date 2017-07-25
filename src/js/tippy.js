@@ -29,7 +29,21 @@ class Tippy {
             content: 'tippy-tooltip-content'
         }
         this.tooltippedEls = [].slice.call(document.querySelectorAll(selector))
-        this.settings = this._applyGlobalSettings(settings)
+
+        const defaults = {
+            html: false,
+            position: 'top',
+            animation: 'shift',
+            animateFill: true,
+            arrow: false,
+            delay: 0,
+            trigger: 'mouseenter focus',
+            duration: 400,
+            theme: 'dark',
+            offset: 0
+        }
+
+        this.settings = defaults;
 
         if (!Tippy.bus) {
             Tippy.bus = {}
@@ -48,39 +62,6 @@ class Tippy {
         )
         this.popperMap = Tippy.bus.refs.map(ref => ref.popper)
         this.tooltippedElMap = Tippy.bus.refs.map(ref => ref.tooltippedEl)
-    }
-
-    _applyGlobalSettings(settings) {
-        
-        const defaults = {
-            html: false,
-            position: 'top',
-            animation: 'shift',
-            animateFill: true,
-            arrow: false,
-            delay: 0,
-            trigger: 'mouseenter focus',
-            duration: 400,
-            interactive: false,
-            theme: 'dark',
-            offset: 0,
-            hideOnClick: true
-        }
-
-        return defaults;
-    }
-
-    getPopperElement(el) {
-        try {
-            el.getAttribute('data-tooltipped')
-        } catch (e) {
-            throw new Error('[Tippy error]: getPopperElement() requires a tooltipped element')
-        }
-        try {
-            return Tippy.bus.refs[this.tooltippedElMap.indexOf(el)].popper
-        } catch (e) {
-            throw new Error('[Tippy error]: Element does not exist in the instance')
-        }
     }
 
     show(popper, duration = 400) {
@@ -112,8 +93,6 @@ class Tippy {
 
         // Hidden anyway
         if (getComputedStyle(popper).getPropertyValue('visibility') === 'hidden') return
-
-
 
         const ref = Tippy.bus.refs[this.popperMap.indexOf(popper)]
         ref.tooltippedEl.classList.remove('active')
@@ -213,9 +192,7 @@ class Tippy {
             Tippy.bus.refs.push({
                 tooltippedEl: el,
                 popper,
-                interactive: settings.interactive,
-                trigger: settings.trigger,
-                hideOnClick: settings.hideOnClick
+                trigger: settings.trigger
             })
 
             // Turn trigger string like "mouseenter focus" into an array
@@ -237,9 +214,7 @@ class Tippy {
                 } else {
                     this.show(popper, settings.duration)
                 }
-                if (settings.interactive) {
-                    event.target.classList.add('active')
-                }
+                
             }
 
             const getRef = target => {
@@ -250,22 +225,7 @@ class Tippy {
             const handleMouseleave = event => {
                 const ref = getRef(event.target)
 
-                // If interactive, only hide if the mouse left somewhere other than the popper
-                if (ref.interactive) {
-                    // Temporarily handle mousemove to check if the mouse left somewhere
-                    // other than its popper
-                    const handleMousemove = event => {
-                        if (event.target.closest(`.${this.classNames.popper}`) !==
-                            ref.popper && !event.target.closest('[data-tooltipped]') &&
-                            ref.trigger.indexOf('click') === -1) {
-                            ref.tooltippedEl.classList.remove('active')
-                            this.hide(ref.popper)
-                            document.removeEventListener('mousemove', handleMousemove)
-                        }
-                    }
-                    document.addEventListener('mousemove', handleMousemove)
-                    return
-                }
+               
                 this.hide(ref.popper)
             }
 
