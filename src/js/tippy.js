@@ -54,7 +54,7 @@ class Tippy {
 
     show(popper, duration = 400) {
         const tooltip = popper.querySelector(`.${this.classNames.tooltip}`)
-        
+
         tooltip.style.WebkitTransitionDuration = duration + 'ms'
         tooltip.style.transitionDuration = duration + 'ms'
         tooltip.classList.add('enter')
@@ -78,8 +78,6 @@ class Tippy {
         const tooltip = popper.querySelector(`.${this.classNames.tooltip}`)
         tooltip.classList.add('leave')
         tooltip.classList.remove('enter')
-
-
 
         popper.style.visibility = 'hidden'
 
@@ -132,12 +130,25 @@ class Tippy {
 
         content.innerHTML = title
 
-
         tooltip.appendChild(content)
         popper.appendChild(tooltip)
         document.body.appendChild(popper)
 
         return popper
+    }
+
+
+    getPopperElement(el) {
+        try {
+            el.getAttribute('data-tooltipped')
+        } catch (e) {
+            throw new Error('[Tippy error]: getPopperElement() requires a tooltipped element')
+        }
+        try {
+            return Tippy.bus.refs[this.tooltippedElMap.indexOf(el)].popper
+        } catch (e) {
+            throw new Error('[Tippy error]: Element does not exist in the instance')
+        }
     }
 
     _createTooltips() {
