@@ -1,16 +1,5 @@
 import Popper from './popper'
 
-// .closest() polyfill
-if (!Element.prototype.matches) Element.prototype.matches = Element.prototype.msMatchesSelector
-if (!Element.prototype.closest) Element.prototype.closest = function (selector) {
-    var el = this
-    while (el) {
-        if (el.matches(selector)) {
-            return el
-        }
-        el = el.parentElement
-    }
-}
 
 /**!
  * @file tippy.js | Pure JS Tooltip Library
@@ -22,7 +11,7 @@ class Tippy {
     constructor(selector, settings = {}) {
 
         this.selector = selector
-        this.callbacks = {}
+
         this.classNames = {
             popper: 'tippy-popper',
             tooltip: 'tippy-tooltip',
@@ -39,7 +28,6 @@ class Tippy {
             delay: 0,
             trigger: 'mouseenter focus',
             duration: 400,
-            theme: 'dark',
             offset: 0
         }
 
@@ -65,22 +53,12 @@ class Tippy {
     }
 
     show(popper, duration = 400) {
-
-
         const tooltip = popper.querySelector(`.${this.classNames.tooltip}`)
-        const circle = popper.querySelector('[x-circle]')
-
+        
         tooltip.style.WebkitTransitionDuration = duration + 'ms'
         tooltip.style.transitionDuration = duration + 'ms'
         tooltip.classList.add('enter')
         tooltip.classList.remove('leave')
-
-        if (circle) {
-            circle.style.WebkitTransitionDuration = duration + 'ms'
-            circle.style.transitionDuration = duration + 'ms'
-            circle.classList.add('enter')
-            circle.classList.remove('leave')
-        }
 
         popper.style.visibility = 'visible'
         popper.focus()
@@ -101,11 +79,7 @@ class Tippy {
         tooltip.classList.add('leave')
         tooltip.classList.remove('enter')
 
-        const circle = popper.querySelector('[x-circle]')
-        if (circle) {
-            circle.classList.add('leave')
-            circle.classList.remove('enter')
-        }
+
 
         popper.style.visibility = 'hidden'
 
@@ -117,8 +91,6 @@ class Tippy {
 
         }, duration)
     }
-
-
 
     _createPopperInstance(tooltippedEl, popper, settings) {
 
@@ -147,7 +119,7 @@ class Tippy {
         popper.setAttribute('x-init', this.selector)
 
         const tooltip = document.createElement('div')
-        tooltip.setAttribute('class', `${this.classNames.tooltip} ${settings.theme} leave`)
+        tooltip.setAttribute('class', `${this.classNames.tooltip} leave`)
         tooltip.setAttribute('data-position', settings.position)
         tooltip.setAttribute('data-animation', settings.animation)
 
@@ -177,13 +149,6 @@ class Tippy {
             // Do not create a tooltip for title attributeless, empty strings or no html els
             if ((title === null || title === '') && !settings.html) return
 
-            // Remove default browser tooltip
-            el.setAttribute('data-original-title', title || 'html')
-            el.removeAttribute('title')
-
-            // Give elements a data-tooltipped attribute (needed for document click handler)
-            el.setAttribute('data-tooltipped', '')
-
             // Create a new popper element and instance
             const popper = this._createPopperElement(title, settings)
             this._createPopperInstance(el, popper, settings)
@@ -204,17 +169,7 @@ class Tippy {
                 if (event === 'click' && popper.style.visibility === 'visible') {
                     return this.hide(popper)
                 }
-                if (settings.delay) {
-                    const timeout = setTimeout(
-                        () => this.show(popper, settings.duration),
-                        settings.delay
-                    )
-                    // Allow the hide() function to clear any unwanted timeouts due to delays
-                    popper.setAttribute('data-timeout', timeout)
-                } else {
-                    this.show(popper, settings.duration)
-                }
-                
+                this.show(popper, settings.duration)
             }
 
             const getRef = target => {
@@ -224,8 +179,6 @@ class Tippy {
 
             const handleMouseleave = event => {
                 const ref = getRef(event.target)
-
-               
                 this.hide(ref.popper)
             }
 
