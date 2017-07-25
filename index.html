@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>Tippy.js - Pure JS Tooltip Library</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="js/focus-ring.js" defer></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ"
+    crossorigin="anonymous">
+  <link rel="stylesheet" href="css/tippy.css">
+  <link rel="stylesheet" href="css/app.css">
+  <link rel="icon" href="favicon.ico">
+
+  <noscript>
+    <style>
+      main .container-fluid {
+        opacity: 1;
+      }
+
+      .hero {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+      }
+
+      .hero-badge {
+        -webkit-transform: scale(1);
+        transform: scale(1);
+      }
+    </style>
+  </noscript>
+
+</head>
+
+<body>
+
+  <div id="app">
+
+    <main>
+      <div class="content-wrapper">
+        <div class="container-fluid enter">
+          <section id="features">
+            <h2 class="heading-top text-center light">Features</h2>
+            <h5 class="text-center text-muted"><span class="hidden-md-down">Hover your cursor over the buttons to see Tippy in action!</span><span class="hidden-lg-up">Tap the buttons to see Tippy in action!</span></h5>
+            
+            <div class="button-showcase d-flex justify-content-center flex-wrap">
+              <button class="btn tippy" title="I'm the default tooltip!"><i class="material-icons icon-left">remove</i>Default322</button>
+            </div>
+            
+          </section>
+
+
+          <script src="js/tippy.js"></script>
+          <script>
+            new Tippy('.tippy')
+
+          </script>
+</body>
+
+</html>
